@@ -1,0 +1,32 @@
+SELECT
+    p.name AS Pokemon_Name,
+    t.trainername AS Trainer_Name,
+    pt.pokelevel AS Level,
+    ty1.name AS Primary_Type,
+    ty2.name AS Secondary_Type
+FROM
+    pokemon_trainer pt
+JOIN
+    pokemons p ON pt.pokemon_id = p.id
+JOIN
+    trainers t ON pt.trainerID = t.trainerID
+LEFT JOIN
+    types ty1 ON p.primary_type = ty1.id
+LEFT JOIN
+    types ty2 ON p.secondary_type = ty2.id
+JOIN (
+    SELECT
+        pt.trainerID,
+        MAX(pt.hp + pt.attack + pt.defense + pt.spatk + pt.spdef + pt.speed) AS max_strength
+    FROM
+        pokemon_trainer pt
+    GROUP BY
+        pt.trainerID
+) max_strengths ON pt.trainerID = max_strengths.trainerID
+AND (pt.hp + pt.attack + pt.defense + pt.spatk + pt.spdef + pt.speed) = max_strengths.max_strength
+ORDER BY
+    max_strengths.max_strength DESC;
+
+
+
+    13077 rows in set (0.20 sec)
